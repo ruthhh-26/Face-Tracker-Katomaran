@@ -1,0 +1,14 @@
+# BoT-SORT with appearance (ReID) for the person tracker - see README. track_buffer is in detection cycles:
+# keep it <= exit_grace_frames / (detection_skip_frames + 1), otherwise a closed track can be revived.
+tracker_type: botsort
+track_high_thresh: 0.5
+track_low_thresh: 0.1
+new_track_thresh: 0.6
+track_buffer: 20
+match_thresh: 0.8
+fuse_score: True
+gmc_method: none        # fixed camera: skip camera-motion compensation (saves CPU)
+proximity_thresh: 0.5
+appearance_thresh: 0.8
+with_reid: True
+model: auto             # use the detector's own features as the appearance cue
