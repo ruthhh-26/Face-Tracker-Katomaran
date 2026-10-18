@@ -1,9 +1,9 @@
 ﻿# Intelligent Face Tracker with Auto-Registration & Unique Visitor Counting
 
-This program watches a video file or a live RTSP stream and counts how many different people appear. It finds and tracks
-people, recognises their faces and registers anyone new. Every entry and exit is saved with a cropped photo, a timestamp,
-the event type and the visitor's ID, in a folder, in `events.log` and in PostgreSQL. People who never show a face (for
-example, someone walking away from the camera) are still tracked and are counted separately.
+This program watches a video file or a live RTSP stream and counts how many different people appear in it. It finds
+and follows each person, recognises faces, and registers anyone new. Every entry and exit is saved as a cropped photo,
+a time, an event type and an ID, in a folder, in `events.log` and in PostgreSQL. People who never show their face (for
+example, someone walking away from the camera) are still tracked and counted, as a separate group.
 
 Demo video: **_add your Loom / YouTube link here_**  |  Sample output: [`sample_output/`](sample_output/)  |
 Planning: [`docs/PLANNING.md`](docs/PLANNING.md)  |  Architecture: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)  |
@@ -22,7 +22,7 @@ Prompts used: [`PROMPTS.md`](PROMPTS.md)
 | Logging | `logs/events.log` + `logs/entries|exits/YYYY-MM-DD/` + database |
 | Camera input | video file (dev) / RTSP stream (interview) |
 
-Also added: OSNet body re-identification (torchreid), a Streamlit dashboard and a few tuning tools.
+Extras beyond the brief: OSNet body re-identification (torchreid), a Streamlit dashboard, tuning tools.
 
 ## Setup
 ```bash
