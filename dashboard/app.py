@@ -15,6 +15,8 @@ import psycopg2
 import streamlit as st
 
 ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 CFG = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
 
 st.set_page_config(page_title="Face Tracker Dashboard", page_icon="👤", layout="wide")
@@ -183,6 +185,8 @@ def run_panel():
     if c1.button("▶ Start tracking", type="primary", disabled=running or not source or source == "rtsp://"):
         if reset:
             with psycopg2.connect(**_conn_params()) as conn, conn.cursor() as cur:
+                from src.db import SCHEMA            # a fresh database has no tables until the tracker first runs
+                cur.execute(SCHEMA)
                 cur.execute("TRUNCATE events, faces RESTART IDENTITY CASCADE")
             for sub in ("entries", "exits"):
                 shutil.rmtree(log_dir / sub, ignore_errors=True)

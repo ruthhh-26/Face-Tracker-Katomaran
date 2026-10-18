@@ -37,9 +37,11 @@ entry/exit state machine -> logs (images, `events.log`) and PostgreSQL -> unique
 - Tuning tools (record once, replay settings, compare with hand counts)
 
 ## 3. Compute estimate
-Measured on a CPU-only machine at 2688x1520 with `detection_skip_frames=2`: face detection ~120 ms and person tracking
-~70 ms per detection cycle (every 3rd frame), ArcFace ~120 ms per face and OSNet ~50 ms per person (only a few times per
-track), ~1 GB RAM, ~8-9 FPS end to end. GPU figures are not measured (no GPU on the dev machine); see the README table.
+Measured on an Intel Core 5 205H (8 cores, 16 GB RAM) with an NVIDIA RTX 3050 6 GB Laptop GPU, 2688x1520 input,
+`detection_skip_frames=2`: **CPU 10.6 FPS** (~66% process CPU use, ~1.2 GB RAM) and **GPU 40.8 FPS** (~25% process CPU
+use, ~1.9 GB RAM, ~200 MB extra GPU memory). Per detection cycle on CPU: face detection ~120 ms and person tracking
+~70 ms; ArcFace ~120 ms per face (always CPU) and OSNet ~50 ms per person (only a few times per track). Both devices
+found the same 12 visitors on the test video. See the README table for details.
 The main cost is the two YOLO models on detection frames; raising `detection_skip_frames` trades CPU for timing accuracy
 of entries and exits.
 

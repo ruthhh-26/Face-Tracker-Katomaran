@@ -62,7 +62,7 @@ The database password below is only the local Docker default from `docker-compos
   "yolo_weights": "models/yolov8n-face.pt",
   "person_weights": "models/yolov8n.pt",
   "tracker_config": "bytetrack.yaml",
-  "device": "cpu",
+  "device": "cuda:0",
   "detection_skip_frames": 2,
   "detection_confidence": 0.35,
   "detection_imgsz": 1280,
@@ -149,21 +149,30 @@ weaknesses: one person can still be split in two (a far body crop that never mee
 alike can be merged.
 
 ## Compute estimate
-Measured on the dev machine (**CPU only, no GPU**, 2688x1520 input, `detection_skip_frames=2`):
+**Test machine:** Intel Core 5 205H (8 cores / 12 threads), 16 GB RAM, NVIDIA GeForce RTX 3050 6 GB Laptop GPU.
+**Test video:** `record_20250620_183903.mp4` (1,502 frames, 2688x1520, 25 FPS), `detection_skip_frames=2`, no annotated
+video written, same result on both devices (12 unique visitors: 10 by face, 2 body-only).
 
-| Stage | CPU time (measured) | Runs |
+| Measured end to end | CPU (`"device": "cpu"`) | GPU (`"device": "cuda:0"`) |
 |---|---|---|
-| Face detection (YOLOv8n-face, 1280 px) | ~120 ms | every 3rd frame |
-| Person detection + tracking (YOLOv8n, 960 px) | ~70 ms | every 3rd frame |
-| ArcFace embedding | ~120 ms per face | first ~3 sightings of a track |
-| OSNet body embedding | ~50 ms per person | a few per track |
-| **End to end** | **~8-9 FPS** (includes decoding, drawing, live preview and writing the annotated video) | |
-| RAM | ~1 GB for the models (one process) | |
+| Throughput | **10.6 FPS** (148 s for the video) | **40.8 FPS** (44 s for the video) |
+| Tracker process CPU use (share of the whole CPU) | ~66% | ~25% |
+| Peak RAM (tracker process) | ~1.2 GB | ~1.9 GB |
+| GPU memory | not used | ~200 MB above the desktop's baseline (~1.7 GB total in use) |
 
-- A live stream is read by a thread that always keeps only the latest frame, so processing stays real-time but skips
-  frames when it cannot keep up. Raise `detection_skip_frames` for less CPU.
-- **GPU (not tested - no CUDA GPU on the dev machine):** install a CUDA build of PyTorch and set `"device": "cuda:0"` to
-  move YOLO and OSNet to the GPU; ArcFace runs on CPU unless `onnxruntime-gpu` is also installed.
+- With the GPU the pipeline is about **3.8x faster**, which is above the camera's 25 FPS, so a live stream is processed in
+  real time without dropping frames. On CPU it is roughly 2.4x slower than real time, so a live stream would be
+  processed at a reduced rate (the reader thread keeps only the latest frame).
+- On the GPU, YOLOv8n-face, YOLOv8n (person + ByteTrack) and OSNet run on CUDA. **ArcFace (InsightFace) always runs on the
+  CPU** (`CPUExecutionProvider` in `src/recognizer.py`); it is only invoked for the first few sightings of a track.
+- GPU utilisation was low (the desktop itself already used about a third of the GPU), so the models are small enough that
+  the CPU side (decoding a 2.7K video, drawing, bookkeeping) becomes the limit. Per-stage latency on the CPU run is about
+  120 ms for face detection and 70 ms for person tracking per detection cycle (every 3rd frame), ~120 ms per ArcFace
+  embedding and ~50 ms per OSNet embedding.
+- If CUDA is not available, `main.py` logs a warning and falls back to the CPU automatically. Raise
+  `detection_skip_frames` for less load on either device.
+- To use the GPU, install a CUDA build of PyTorch, for example
+  `pip install --force-reinstall --no-deps torch torchvision --index-url https://download.pytorch.org/whl/cu126`.
 
 ## Assumptions
 - Faces >= `min_face_size` px are usable for recognition; for 2K/4K cameras `detection_imgsz` must be raised (1280+).

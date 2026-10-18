@@ -34,7 +34,7 @@
   "body_sample_interval": 4,
   "min_body_height": 80,
   "tracker_config": "bytetrack.yaml",
-  "device": "cpu",
+  "device": "cuda:0",
   "detection_skip_frames": 2,
   "detection_confidence": 0.35,
   "detection_imgsz": 1280,

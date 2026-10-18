@@ -1,0 +1,129 @@
+2026-10-18 21:45:04,515 | INFO | START source=C:\Face tracker\Sample\record_20250620_183903.mp4 skip=2
+2026-10-18 21:45:20,370 | INFO | TRACK_START track=1 frame=0 box=(2090, 363, 2429, 1162)
+2026-10-18 21:45:22,830 | INFO | EMBEDDING track=1 sample=1/3
+2026-10-18 21:45:22,831 | INFO | TRACK_START track=2 frame=0 box=(2561, 268, 2687, 596)
+2026-10-18 21:45:26,423 | INFO | EMBEDDING track=1 sample=2/3
+2026-10-18 21:45:29,368 | INFO | EMBEDDING track=1 sample=3/3
+2026-10-18 21:45:29,397 | INFO | REGISTER id=F0001 track=1 NEW visitor (best face_sim=n/a, best body_sim=n/a, no match)
+2026-10-18 21:45:29,455 | INFO | ENTRY id=F0001 track=1 image=logs/entries/2026-10-18/F0001_214529_430.jpg
+2026-10-18 21:45:38,323 | INFO | EMBEDDING track=2 sample=1/3
+2026-10-18 21:45:41,274 | INFO | EMBEDDING track=2 sample=2/3
+2026-10-18 21:45:43,893 | INFO | EMBEDDING track=2 sample=3/3
+2026-10-18 21:45:43,913 | INFO | REGISTER id=F0002 track=2 NEW visitor (best face_sim=-0.057, best body_sim=-0.349, no match)
+2026-10-18 21:45:43,957 | INFO | ENTRY id=F0002 track=2 image=logs/entries/2026-10-18/F0002_214543_936.jpg
+2026-10-18 21:45:54,990 | INFO | EXIT id=F0001 track=1 image=logs/exits/2026-10-18/F0001_214554_976.jpg
+2026-10-18 21:45:55,006 | INFO | TRACK_END track=1 id=F0001 frames=0-81 last_box=(2540, 1285, 2677, 1520)
+2026-10-18 21:45:58,544 | INFO | TRACK_START track=3 frame=180 box=(1845, 0, 1910, 102)
+2026-10-18 21:46:04,896 | INFO | REGISTER id=P0003 track=3 NEW visitor (best face_sim=n/a, best body_sim=-0.026, no match)
+2026-10-18 21:46:04,910 | INFO | ENTRY id=P0003 track=3 image=logs/entries/2026-10-18/P0003_214604_902.jpg
+2026-10-18 21:46:07,921 | INFO | TRACK_START track=5 frame=264 box=(1055, 0, 1125, 175)
+2026-10-18 21:46:08,032 | INFO | TRACK_START track=6 frame=264 box=(614, 51, 673, 196)
+2026-10-18 21:46:08,487 | INFO | TRACK_START track=7 frame=267 box=(995, 0, 1076, 191)
+2026-10-18 21:46:16,582 | INFO | EMBEDDING track=3 sample=1/3
+2026-10-18 21:46:18,813 | INFO | EMBEDDING track=3 sample=2/3
+2026-10-18 21:46:21,851 | INFO | EMBEDDING track=3 sample=3/3
+2026-10-18 21:46:21,877 | INFO | PROMOTE id=P0003 -> F0003 (face seen after back view)
+2026-10-18 21:46:21,889 | INFO | REGISTER id=P0004 track=5 NEW visitor (best face_sim=n/a, best body_sim=0.266, no match)
+2026-10-18 21:46:21,909 | INFO | ENTRY id=P0004 track=5 image=logs/entries/2026-10-18/P0004_214621_896.jpg
+2026-10-18 21:46:24,357 | INFO | REGISTER id=P0005 track=6 NEW visitor (best face_sim=n/a, best body_sim=0.120, no match)
+2026-10-18 21:46:24,379 | INFO | ENTRY id=P0005 track=6 image=logs/entries/2026-10-18/P0005_214624_363.jpg
+2026-10-18 21:46:25,592 | INFO | REGISTER id=P0006 track=7 NEW visitor (best face_sim=n/a, best body_sim=0.387, no match)
+2026-10-18 21:46:25,606 | INFO | ENTRY id=P0006 track=7 image=logs/entries/2026-10-18/P0006_214625_596.jpg
+2026-10-18 21:46:34,068 | INFO | EXIT id=P0004 track=5 image=logs/exits/2026-10-18/P0004_214634_046.jpg
+2026-10-18 21:46:34,078 | INFO | TRACK_END track=5 id=P0004 frames=264-342 last_box=(1176, 0, 1272, 237)
+2026-10-18 21:46:36,420 | INFO | EMBEDDING track=7 sample=1/3
+2026-10-18 21:46:39,310 | INFO | EMBEDDING track=7 sample=2/3
+2026-10-18 21:46:42,224 | INFO | EMBEDDING track=7 sample=3/3
+2026-10-18 21:46:42,253 | INFO | PROMOTE id=P0006 -> F0006 (face seen after back view)
+2026-10-18 21:46:46,584 | INFO | TRACK_START track=8 frame=441 box=(1117, 90, 1207, 288)
+2026-10-18 21:46:50,299 | INFO | TRACK_START track=10 frame=471 box=(980, 0, 1202, 382)
+2026-10-18 21:46:52,414 | INFO | EMBEDDING track=10 sample=1/3
+2026-10-18 21:46:55,309 | INFO | EMBEDDING track=10 sample=2/3
+2026-10-18 21:46:58,261 | INFO | EMBEDDING track=10 sample=3/3
+2026-10-18 21:46:58,262 | INFO | PREDICTION_ZONE track=10 candidates(zone_dist)={4: 0.15, 5: 0.4} body_sims={4: -0.014, 5: 0.056}
+2026-10-18 21:46:58,280 | INFO | REGISTER id=F0007 track=10 NEW visitor (best face_sim=0.192, best body_sim=0.246, no match)
+2026-10-18 21:46:58,325 | INFO | ENTRY id=F0007 track=10 image=logs/entries/2026-10-18/F0007_214658_304.jpg
+2026-10-18 21:47:01,680 | INFO | PREDICTION_ZONE track=8 candidates(zone_dist)={4: 0.17} body_sims={4: 0.044}
+2026-10-18 21:47:01,691 | INFO | REGISTER id=P0008 track=8 NEW visitor (best face_sim=n/a, best body_sim=0.516, no match)
+2026-10-18 21:47:01,709 | INFO | ENTRY id=P0008 track=8 image=logs/entries/2026-10-18/P0008_214701_698.jpg
+2026-10-18 21:47:02,790 | INFO | EXIT id=P0005 track=6 image=logs/exits/2026-10-18/P0005_214702_772.jpg
+2026-10-18 21:47:02,809 | INFO | TRACK_END track=6 id=P0005 frames=264-447 last_box=(849, 0, 1027, 432)
+2026-10-18 21:47:06,640 | INFO | TRACK_START track=11 frame=546 box=(2468, 201, 2640, 528)
+2026-10-18 21:47:08,639 | INFO | EMBEDDING track=11 sample=1/3
+2026-10-18 21:47:11,563 | INFO | EMBEDDING track=11 sample=2/3
+2026-10-18 21:47:11,655 | INFO | EXIT id=F0003 track=3 image=logs/exits/2026-10-18/F0003_214711_628.jpg
+2026-10-18 21:47:11,678 | INFO | TRACK_END track=3 id=F0003 frames=180-489 last_box=(2483, 688, 2688, 1515)
+2026-10-18 21:47:14,003 | INFO | EMBEDDING track=11 sample=3/3
+2026-10-18 21:47:14,015 | INFO | REGISTER id=F0009 track=11 NEW visitor (best face_sim=0.267, best body_sim=0.423, no match)
+2026-10-18 21:47:14,031 | INFO | ENTRY id=F0009 track=11 image=logs/entries/2026-10-18/F0009_214714_024.jpg
+2026-10-18 21:47:15,157 | INFO | TRACK_START track=12 frame=558 box=(1083, 0, 1188, 155)
+2026-10-18 21:47:16,579 | INFO | EXIT id=P0008 track=8 image=logs/exits/2026-10-18/P0008_214716_572.jpg
+2026-10-18 21:47:16,582 | INFO | TRACK_END track=8 id=P0008 frames=441-516 last_box=(1314, 155, 1407, 385)
+2026-10-18 21:47:18,447 | INFO | TRACK_START track=13 frame=615 box=(1497, 250, 1593, 507)
+2026-10-18 21:47:19,553 | INFO | EMBEDDING track=13 sample=1/3
+2026-10-18 21:47:19,919 | INFO | REGISTER id=P0010 track=12 NEW visitor (best face_sim=n/a, best body_sim=0.246, no match)
+2026-10-18 21:47:19,930 | INFO | ENTRY id=P0010 track=12 image=logs/entries/2026-10-18/P0010_214719_923.jpg
+2026-10-18 21:47:21,083 | INFO | EMBEDDING track=13 sample=2/3
+2026-10-18 21:47:22,592 | INFO | EMBEDDING track=13 sample=3/3
+2026-10-18 21:47:22,595 | INFO | PREDICTION_ZONE track=13 candidates(zone_dist)={8: 0.23} body_sims={8: 0.398}
+2026-10-18 21:47:22,596 | INFO | MATCH id=8 track=13 rule=continuity face_sim=n/a body_sim=0.398
+2026-10-18 21:47:22,607 | INFO | PROMOTE id=P0008 -> F0008 (face seen after back view)
+2026-10-18 21:47:22,618 | INFO | ENTRY id=F0008 track=13 image=logs/entries/2026-10-18/F0008_214722_610.jpg
+2026-10-18 21:47:27,473 | INFO | EMBEDDING track=12 sample=1/3
+2026-10-18 21:47:28,880 | INFO | EMBEDDING track=12 sample=2/3
+2026-10-18 21:47:30,412 | INFO | EMBEDDING track=12 sample=3/3
+2026-10-18 21:47:30,426 | INFO | PROMOTE id=P0010 -> F0010 (face seen after back view)
+2026-10-18 21:47:33,631 | INFO | EXIT id=F0006 track=7 image=logs/exits/2026-10-18/F0006_214733_623.jpg
+2026-10-18 21:47:33,635 | INFO | TRACK_END track=7 id=F0006 frames=267-672 last_box=(359, 1352, 513, 1520)
+2026-10-18 21:47:34,066 | INFO | EXIT id=F0007 track=10 image=logs/exits/2026-10-18/F0007_214734_057.jpg
+2026-10-18 21:47:34,071 | INFO | TRACK_END track=10 id=F0007 frames=471-681 last_box=(1747, 1284, 1968, 1520)
+2026-10-18 21:47:35,281 | INFO | EXIT id=F0009 track=11 image=logs/exits/2026-10-18/F0009_214735_274.jpg
+2026-10-18 21:47:35,286 | INFO | TRACK_END track=11 id=F0009 frames=546-708 last_box=(2513, 195, 2641, 408)
+2026-10-18 21:47:38,242 | INFO | TRACK_START track=15 frame=828 box=(2464, 196, 2638, 521)
+2026-10-18 21:47:39,325 | INFO | EMBEDDING track=15 sample=1/3
+2026-10-18 21:47:40,813 | INFO | EMBEDDING track=15 sample=2/3
+2026-10-18 21:47:42,290 | INFO | EMBEDDING track=15 sample=3/3
+2026-10-18 21:47:42,290 | INFO | PREDICTION_ZONE track=15 candidates(zone_dist)={9: 0.09} body_sims={9: 0.851}
+2026-10-18 21:47:42,291 | INFO | MATCH id=9 track=15 rule=face face_sim=0.711 body_sim=0.851
+2026-10-18 21:47:42,309 | INFO | ENTRY id=F0009 track=15 image=logs/entries/2026-10-18/F0009_214742_304.jpg
+2026-10-18 21:47:47,529 | INFO | EXIT id=F0008 track=13 image=logs/exits/2026-10-18/F0008_214747_521.jpg
+2026-10-18 21:47:47,536 | INFO | TRACK_END track=13 id=F0008 frames=615-864 last_box=(2377, 1432, 2454, 1520)
+2026-10-18 21:47:48,437 | INFO | EXIT id=F0010 track=12 image=logs/exits/2026-10-18/F0010_214748_432.jpg
+2026-10-18 21:47:48,441 | INFO | TRACK_END track=12 id=F0010 frames=558-882 last_box=(0, 718, 131, 1337)
+2026-10-18 21:47:49,140 | INFO | EXIT id=F0009 track=15 image=logs/exits/2026-10-18/F0009_214749_135.jpg
+2026-10-18 21:47:49,143 | INFO | TRACK_END track=15 id=F0009 frames=828-897 last_box=(2466, 196, 2634, 524)
+2026-10-18 21:47:50,635 | INFO | TRACK_START track=16 frame=990 box=(2382, 985, 2644, 1520)
+2026-10-18 21:47:52,279 | INFO | EMBEDDING track=16 sample=1/3
+2026-10-18 21:47:54,266 | INFO | EMBEDDING track=16 sample=2/3
+2026-10-18 21:47:55,702 | INFO | EMBEDDING track=16 sample=3/3
+2026-10-18 21:47:55,705 | INFO | PREDICTION_ZONE track=16 candidates(zone_dist)={9: 0.97} body_sims={9: -0.084}
+2026-10-18 21:47:55,710 | INFO | REGISTER id=F0011 track=16 NEW visitor (best face_sim=0.167, best body_sim=0.197, no match)
+2026-10-18 21:47:55,720 | INFO | ENTRY id=F0011 track=16 image=logs/entries/2026-10-18/F0011_214755_713.jpg
+2026-10-18 21:48:10,059 | INFO | EXIT id=F0011 track=16 image=logs/exits/2026-10-18/F0011_214810_050.jpg
+2026-10-18 21:48:10,063 | INFO | TRACK_END track=16 id=F0011 frames=990-1230 last_box=(810, 0, 930, 280)
+2026-10-18 21:48:15,904 | INFO | TRACK_START track=17 frame=1413 box=(0, 651, 232, 1448)
+2026-10-18 21:48:17,054 | INFO | TRACK_START track=18 frame=1434 box=(0, 500, 118, 1228)
+2026-10-18 21:48:18,495 | INFO | EMBEDDING track=18 sample=1/3
+2026-10-18 21:48:20,008 | INFO | EMBEDDING track=18 sample=2/3
+2026-10-18 21:48:21,621 | INFO | EMBEDDING track=18 sample=3/3
+2026-10-18 21:48:21,631 | INFO | REGISTER id=F0012 track=18 NEW visitor (best face_sim=0.207, best body_sim=0.376, no match)
+2026-10-18 21:48:21,652 | INFO | ENTRY id=F0012 track=18 image=logs/entries/2026-10-18/F0012_214821_641.jpg
+2026-10-18 21:48:23,649 | INFO | REGISTER id=P0013 track=17 NEW visitor (best face_sim=n/a, best body_sim=0.693, no match)
+2026-10-18 21:48:23,659 | INFO | ENTRY id=P0013 track=17 image=logs/entries/2026-10-18/P0013_214823_651.jpg
+2026-10-18 21:48:24,714 | INFO | TRACK_START track=19 frame=1494 box=(2466, 205, 2645, 513)
+2026-10-18 21:48:25,862 | INFO | EMBEDDING track=19 sample=1/3
+2026-10-18 21:48:27,317 | INFO | EMBEDDING track=19 sample=2/3
+2026-10-18 21:48:28,751 | INFO | EMBEDDING track=19 sample=3/3
+2026-10-18 21:48:28,752 | INFO | MATCH id=9 track=19 rule=face face_sim=0.651 body_sim=0.735
+2026-10-18 21:48:28,776 | INFO | ENTRY id=F0009 track=19 image=logs/entries/2026-10-18/F0009_214828_767.jpg
+2026-10-18 21:48:28,870 | INFO | EXIT id=F0002 track=2 image=logs/exits/2026-10-18/F0002_214828_852.jpg
+2026-10-18 21:48:28,872 | INFO | TRACK_END track=2 id=F0002 frames=0-1500 last_box=(2536, 282, 2680, 581)
+2026-10-18 21:48:28,882 | INFO | EXIT id=P0013 track=17 image=logs/exits/2026-10-18/P0013_214828_873.jpg
+2026-10-18 21:48:28,886 | INFO | TRACK_END track=17 id=P0013 frames=1413-1500 last_box=(609, 80, 825, 725)
+2026-10-18 21:48:28,895 | INFO | EXIT id=F0012 track=18 image=logs/exits/2026-10-18/F0012_214828_886.jpg
+2026-10-18 21:48:28,897 | INFO | TRACK_END track=18 id=F0012 frames=1434-1500 last_box=(404, 77, 604, 750)
+2026-10-18 21:48:28,902 | INFO | EXIT id=F0009 track=19 image=logs/exits/2026-10-18/F0009_214828_897.jpg
+2026-10-18 21:48:28,904 | INFO | TRACK_END track=19 id=F0009 frames=1494-1500 last_box=(2466, 203, 2647, 515)
+2026-10-18 21:48:28,940 | INFO | CONSOLIDATE merged visitor 8 into 5 (rule=body face_sim=n/a body_sim=0.516)
+2026-10-18 21:48:28,941 | INFO | CONSOLIDATE done: 1 duplicate visitors merged
+2026-10-18 21:48:29,038 | INFO | END frames=1502 avg_fps=7.8 UNIQUE_VISITORS=12 (by kind: {'face': 10, 'body': 2})

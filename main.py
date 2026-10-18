@@ -10,6 +10,7 @@ import time
 from pathlib import Path
 
 import cv2
+import torch
 
 from src.capture import VideoSource
 from src.config import load_config
@@ -68,6 +69,9 @@ def main():
         cfg["source"] = args.source
     cfg["run_id"] = time.strftime("%Y%m%d_%H%M%S")      # spans only overlap within one run
     log = setup_logging(cfg["log_dir"])
+    if str(cfg["device"]).startswith("cuda") and not torch.cuda.is_available():
+        log.warning("device=%s requested but CUDA is unavailable; falling back to cpu", cfg["device"])
+        cfg["device"] = "cpu"
     log.info("START source=%s skip=%d", cfg["source"], cfg["detection_skip_frames"])
 
     db = Database(cfg["db"])
