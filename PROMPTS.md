@@ -11,9 +11,12 @@ For each prompt: **what it led to** and, where it matters, **what we measured**.
 
 ## 1. Planning
 
-**P1 - Brief (4 screenshots):** "Here is the hackathon brief. Design a Python implementation using YOLO face detection,
-InsightFace embeddings, a tracker and PostgreSQL. Give me the pipeline, module layout, DB schema, `config.json`,
-resilience rules, build order and verification steps."
+**P1 - Problem statement and architecture (4 screenshots):** "Act as a senior Python engineer. Here is the hackathon
+problem statement. Design a modular, real-time face tracking and visitor-counting system for it. Constraints: YOLO for
+face detection, InsightFace/ArcFace for embeddings (not the `face_recognition` library), ByteTrack or a similar tracker,
+PostgreSQL for storage, frame skipping configurable in `config.json`, a video file for development and RTSP for the
+interview. Deliver: the pipeline, a `src/` module layout, the DB schema, the `config.json` structure, resilience rules
+(atomic file writes, DB retry, graceful shutdown), a build order and verification steps."
 - Produced a plan: pipeline (capture -> YOLO face detect -> ByteTrack -> InsightFace ArcFace -> entry/exit state machine
   -> logs/DB), module split (`src/`), PostgreSQL schema, `config.json`, resilience rules, build order, verification steps.
 - Decisions: Python 3.11 venv (InsightFace/onnxruntime wheels missing for 3.14), PostgreSQL in Docker, YOLOv8n-face,
