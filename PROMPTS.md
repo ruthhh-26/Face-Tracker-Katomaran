@@ -1,6 +1,6 @@
 # Prompts that shaped this project
 
-Built with an AI coding assistant (AI-assisted workflow). Below are only the prompts that **changed the design, found a real bug or
+Built with Claude Code (AI-assisted workflow). Below are only the prompts that **changed the design, found a real bug or
 added a feature**, in the order they were asked. Wording is the original, lightly cleaned for typos. Routine prompts
 (run commands, small questions) are left out.
 
@@ -11,7 +11,7 @@ For each prompt: **what it led to** and, where it matters, **what we measured**.
 ## 1. Planning
 
 **P1 - Problem statement (4 screenshots) + "how we can implement this in python ... we can use postgres DB"**
-- The assistant read the brief and produced a plan: pipeline (capture -> YOLO face detect -> ByteTrack -> InsightFace ArcFace ->
+- Claude read the brief and produced a plan: pipeline (capture -> YOLO face detect -> ByteTrack -> InsightFace ArcFace ->
   entry/exit state machine -> logs/DB), module split (`src/`), PostgreSQL schema, `config.json`, resilience rules, build
   order, verification steps.
 - Decisions: Python 3.11 venv (InsightFace/onnxruntime wheels missing for 3.14), PostgreSQL in Docker, YOLOv8n-face,

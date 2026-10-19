@@ -1,9 +1,9 @@
 ﻿# Intelligent Face Tracker with Auto-Registration & Unique Visitor Counting
 
-This program watches a video file or a live RTSP stream and counts how many different people appear in it. It finds
-and follows each person, recognises faces, and registers anyone new. Every entry and exit is saved as a cropped photo,
-a time, an event type and an ID, in a folder, in `events.log` and in PostgreSQL. People who never show their face (for
-example, someone walking away from the camera) are still tracked and counted, as a separate group.
+Processes a video file or a live RTSP stream, detects and tracks people, recognises faces, auto-registers every new
+visitor, logs each entry and exit (cropped image + timestamp + event type + ID) to the filesystem, `events.log` and
+PostgreSQL, and counts **unique visitors**. People who never show a face (for example walking away from the camera) are
+tracked too and counted separately.
 
 Demo video: **_add your Loom / YouTube link here_**  |  Sample output: [`sample_output/`](sample_output/)  |
 Planning: [`docs/PLANNING.md`](docs/PLANNING.md)  |  Architecture: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)  |

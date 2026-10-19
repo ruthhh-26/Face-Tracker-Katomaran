@@ -1,9 +1,9 @@
 # AI-Assisted Planning
 
-Built with an AI coding assistant. The prompts that shaped the project are in [`../PROMPTS.md`](../PROMPTS.md).
+Built with Claude Code. The prompts that shaped the project are in [`../PROMPTS.md`](../PROMPTS.md).
 
 ## 1. Planning the app
-The assistant was given the hackathon problem statement and produced the plan below, which was then refined with real
+Claude Code was given the hackathon problem statement and produced the plan below, which was then refined with real
 footage and hand-counted videos.
 
 **Pipeline:** capture (file / RTSP) -> YOLO detection every `skip+1` frames -> tracking -> ArcFace recognition ->
