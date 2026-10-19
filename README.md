@@ -5,7 +5,7 @@ visitor, logs each entry and exit (cropped image + timestamp + event type + ID) 
 PostgreSQL, and counts **unique visitors**. People who never show a face (for example walking away from the camera) are
 tracked too and counted separately.
 
-- **Demo video:** _add your YouTube link here_
+- **Demo video (Loom):** [Watch the walkthrough](https://www.loom.com/share/0f3237b3d0d747aa87d5f3254b0167c1)
 - **Sample output:** [`sample_output/`](sample_output/)
 - **Planning:** [`docs/PLANNING.md`](docs/PLANNING.md)
 - **Architecture:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
