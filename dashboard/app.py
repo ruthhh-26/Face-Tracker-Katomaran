@@ -4,11 +4,14 @@ Run:  .venv\\Scripts\\streamlit run dashboard/app.py
 Reads the same PostgreSQL DB and logs/ folder that main.py writes to, so it works while tracking is running.
 Styling: Streamlit's theme (.streamlit/config.toml) + a small CSS block below. Charts use Altair (ships with Streamlit).
 """
+import io
 import json
 import shutil
 import subprocess
 import sys
 import time
+import zipfile
+from datetime import datetime
 from pathlib import Path
 
 import altair as alt
@@ -20,6 +23,8 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 CFG = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
+from src.config import load_config  # noqa: E402  (needs ROOT on sys.path)
+RUN_CFG = load_config(str(ROOT / "config.json"))      # config.json merged with the defaults, for the info pages
 
 ACCENT, ACCENT2, GOOD, WARN, BAD, MUTED = "#7C5CFF", "#22D3EE", "#34D399", "#FBBF24", "#F87171", "#8B95AD"
 
@@ -69,7 +74,7 @@ section[data-testid="stSidebar"]{background:var(--panel);border-right:1px solid 
 
 /* KPI cards */
 .kpi{position:relative;overflow:hidden;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);
-  border-radius:16px;padding:16px 18px 14px;height:100%;}
+  border-radius:16px;padding:16px 18px 14px;height:100%;box-sizing:border-box;}
 .kpi::before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:var(--a,var(--accent));opacity:.9;}
 .kpi .lbl{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;}
 .kpi .val{font-size:2.15rem;font-weight:800;line-height:1.15;margin:.2rem 0 .1rem;letter-spacing:-.02em;white-space:nowrap;}
@@ -107,6 +112,41 @@ div[data-testid="stFileUploader"] section{border-radius:14px;border:1px dashed r
 .stProgress > div > div > div{background:linear-gradient(90deg,var(--accent),var(--accent2));}
 div[data-testid="stDataFrame"]{border-radius:14px;overflow:hidden;border:1px solid var(--line);}
 code, pre{font-size:.78rem !important;}
+
+/* "How it works" page */
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:.4rem 0 1rem;}
+.step{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:14px 16px;}
+.step .n{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-weight:800;font-size:.8rem;color:#fff;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));margin-bottom:8px;}
+.step h4{margin:0 0 4px;font-size:.95rem;font-weight:700;padding:0;}
+.step p{margin:0;color:var(--muted);font-size:.8rem;line-height:1.45;}
+.rule{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.03);
+  border:1px solid var(--line);margin-bottom:10px;}
+.rule .k{min-width:86px;text-align:center;font-weight:800;font-size:.95rem;padding:6px 8px;border-radius:10px;
+  background:rgba(124,92,255,.16);color:#CFC6FF;}
+.rule b{display:block;font-size:.88rem;margin-bottom:2px;}
+.rule span.d{color:var(--muted);font-size:.8rem;line-height:1.45;}
+.stack{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;}
+.tech{padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03);}
+.tech b{font-size:.9rem;}
+.tech span{display:block;color:var(--muted);font-size:.78rem;margin-top:2px;}
+
+/* narrow screens */
+@media (max-width: 900px){
+  .block-container{padding:1rem .8rem 2rem;}
+  .hero h1{font-size:1.9rem;}
+  .kpi .val{font-size:1.6rem;}
+  .kpi .val.sm{font-size:1.05rem;}
+  .stTabs [data-baseweb="tab-list"]{width:100%;overflow-x:auto;}
+  div[class*="st-key-kpis"] div[data-testid="stHorizontalBlock"]{flex-wrap:wrap;gap:.7rem !important;row-gap:.7rem !important;}
+  div[class*="st-key-kpis"] div[data-testid="stColumn"], div[class*="st-key-kpis"] div[data-testid="column"]{
+    flex:1 1 calc(50% - .7rem) !important;min-width:calc(50% - .7rem) !important;width:auto !important;}
+  .st-key-gallery div[data-testid="stHorizontalBlock"]{flex-wrap:wrap;gap:.7rem !important;row-gap:.7rem !important;}
+  .st-key-gallery div[data-testid="stColumn"], .st-key-gallery div[data-testid="column"]{
+    flex:1 1 calc(33% - .6rem) !important;min-width:calc(33% - .6rem) !important;width:auto !important;}
+  .rule{flex-direction:column;gap:8px;}
+  .rule .k{align-self:flex-start;}
+}
 </style>
 """
 st.markdown(CSS, unsafe_allow_html=True)
@@ -117,12 +157,13 @@ def pill(text: str, color: str = MUTED, pulse: bool = False) -> str:
     return f'<span class="pill"><span class="dot{" pulse" if pulse else ""}" style="background:{color}"></span>{text}</span>'
 
 
-def kpi_row(items):
-    """items: (label, value, sub-text, accent colour)."""
-    for col, (lbl, val, sub, acc) in zip(st.columns(len(items)), items):
-        size = " sm" if len(str(val)) > 6 else ""      # long values (e.g. "405 / 1502") get a smaller font
-        col.markdown(f'<div class="kpi" style="--a:{acc}"><div class="lbl">{lbl}</div><div class="val{size}">{val}</div>'
-                     f'<div class="sub" title="{sub}">{sub}</div></div>', unsafe_allow_html=True)
+def kpi_row(items, key="kpis"):
+    """items: (label, value, sub-text, accent colour). The container key lets the CSS wrap the cards 2-per-row on phones."""
+    with st.container(key=key):
+        for col, (lbl, val, sub, acc) in zip(st.columns(len(items)), items):
+            size = " sm" if len(str(val)) > 6 else ""      # long values (e.g. "405 / 1502") get a smaller font
+            col.markdown(f'<div class="kpi" style="--a:{acc}"><div class="lbl">{lbl}</div><div class="val{size}">{val}</div>'
+                         f'<div class="sub" title="{sub}">{sub}</div></div>', unsafe_allow_html=True)
 
 
 def section(title: str, hint: str = ""):
@@ -167,6 +208,50 @@ def label(row_kind, vid):
 
 def badge(visitor: str) -> str:
     return f'<span class="badge {"f" if visitor.startswith("F") else "p"}">{visitor}</span>'
+
+
+def _visitor_table(events: pd.DataFrame, faces: pd.DataFrame) -> pd.DataFrame:
+    """One row per visitor: entries, exits, first/last event, last event type, kind (face/body)."""
+    if events.empty:
+        return pd.DataFrame()
+    agg = events.groupby("visitor").agg(
+        entries=("event_type", lambda s: int((s == "entry").sum())),
+        exits=("event_type", lambda s: int((s == "exit").sum())),
+        first_event=("ts", "min"), last_event=("ts", "max"), last_type=("event_type", "last"))
+    return agg.join(faces.set_index("visitor")[["kind"]])
+
+
+def _summary(faces: pd.DataFrame, events: pd.DataFrame) -> str:
+    """Plain-text run summary for the report."""
+    s = _read_status()
+    ts = pd.to_datetime(events.ts)
+    lines = ["FACE TRACKER REPORT", f"Generated: {datetime.now():%Y-%m-%d %H:%M:%S}", "",
+             f"Source: {s.get('source', 'n/a')}",
+             f"Frames processed: {s.get('frame', 'n/a')} / {s.get('total', 'n/a')}",
+             f"Average processing FPS: {s.get('fps', 'n/a')}",
+             f"Device: {RUN_CFG['device']}   |   detection skip frames: {RUN_CFG['detection_skip_frames']}", "",
+             f"Unique visitors: {len(faces)}",
+             f"  identified by face (F####): {int((faces.kind == 'face').sum())}",
+             f"  body-only (P####): {int((faces.kind == 'body').sum())}",
+             f"Entries logged: {int((events.event_type == 'entry').sum())}",
+             f"Exits logged: {int((events.event_type == 'exit').sum())}",
+             f"First event: {ts.min()}", f"Last event: {ts.max()}"]
+    return "\n".join(lines)
+
+
+def _report_zip(summary: str, faces: pd.DataFrame, events: pd.DataFrame, with_images: bool) -> bytes:
+    """summary.txt + visitors.csv + events.csv (+ the entry/exit crops) in one zip, built in memory."""
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
+        z.writestr("summary.txt", summary)
+        z.writestr("visitors.csv", _visitor_table(events, faces).to_csv())
+        z.writestr("events.csv", events.to_csv(index=False))
+        if with_images:
+            for p in events.image_path.dropna().unique():
+                f = ROOT / p
+                if p and f.is_file():
+                    z.write(f, arcname=str(p))
+    return buf.getvalue()
 
 
 # ---- run control state (before the sidebar so the header can show it) -------------
@@ -232,12 +317,13 @@ def dashboard():
         ("Body-only", int((faces.kind == "body").sum()), "P#### IDs", WARN),
         ("Entries / exits", f"{n_entry} / {n_exit}", "logged events", ACCENT2),
         ("In frame now", inside, "last event was an entry", GOOD),
-    ])
+    ], key="kpis_results")
 
     ev = events[events.kind.isin(kind_filter) & events.event_type.isin(type_filter)]
     st.write("")
-    tab1, tab2, tab3, tab4 = st.tabs([":material/show_chart: Timeline", ":material/groups: Visitors",
-                                      ":material/receipt_long: Events", ":material/photo_library: Images & log"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([":material/show_chart: Timeline", ":material/groups: Visitors",
+                                            ":material/receipt_long: Events", ":material/photo_library: Images & log",
+                                            ":material/summarize: Report"])
 
     with tab1:
         if ev.empty:
@@ -280,11 +366,7 @@ def dashboard():
 
     with tab2:
         if len(events):
-            agg = events.groupby("visitor").agg(
-                entries=("event_type", lambda s: int((s == "entry").sum())),
-                exits=("event_type", lambda s: int((s == "exit").sum())),
-                first_event=("ts", "min"), last_event=("ts", "max"), last_type=("event_type", "last"))
-            agg = agg.join(faces.set_index("visitor")[["kind"]])
+            agg = _visitor_table(events, faces)
             section("All visitors", f"{len(agg)} unique")
             st.dataframe(agg[agg.kind.isin(kind_filter)], width="stretch")
         else:
@@ -322,6 +404,23 @@ def dashboard():
             st.code("\n".join(lf.read_text(encoding="utf-8", errors="replace").splitlines()[-60:]), language="text")
         else:
             st.caption(f"{lf} not found")
+
+    with tab5:
+        section("Run report", "summary and downloads")
+        if events.empty:
+            empty("Nothing to report yet. Run the tracker first.")
+        else:
+            summary = _summary(faces, events)
+            st.code(summary, language="text")
+            with_img = st.toggle("Include the entry/exit images in the zip", value=False)
+            d1, d2, d3 = st.columns(3)
+            d1.download_button("Visitors CSV", _visitor_table(events, faces).to_csv(), "visitors.csv", "text/csv",
+                               icon=":material/groups:", width="stretch")
+            d2.download_button("Events CSV", events.to_csv(index=False), "events.csv", "text/csv",
+                               icon=":material/receipt_long:", width="stretch")
+            d3.download_button("Full report (.zip)", _report_zip(summary, faces, events, with_img),
+                               "face_tracker_report.zip", "application/zip", icon=":material/folder_zip:", width="stretch")
+            st.caption("Reports always include every visitor and event, whatever the sidebar filters are set to.")
 
 
 # ---- run control + live view ---------------------------------------------------
@@ -430,7 +529,7 @@ def live_panel():
         ("People in frame", status.get("active", 0), "currently tracked", GOOD),
         ("Processing FPS", status.get("fps", 0), "average this run", ACCENT2),
         ("Frame", frame_txt, "progress", WARN),
-    ])
+    ], key="kpis_live")
     if total > 0:
         st.progress(min(1.0, status.get("frame", 0) / total))
     st.write("")
@@ -459,10 +558,61 @@ def live_panel():
                             f'<span class="t">{pd.to_datetime(r.ts):%H:%M:%S}</span></div>', unsafe_allow_html=True)
 
 
-t_live, t_run, t_data = st.tabs([":material/sensors: Live", ":material/play_circle: Run", ":material/insights: Results"])
+def how_it_works():
+    """Static explainer page. Numbers come from config.json (merged with the defaults), so it never goes out of date."""
+    c = RUN_CFG
+    n = c["detection_skip_frames"] + 1
+    section("The pipeline", "from camera to unique visitor count")
+    steps = [
+        ("Capture", "Reads a video file or an RTSP stream. A reader thread keeps only the newest frame, so a live stream never lags."),
+        ("Detect", f"YOLOv8 finds people and faces once every {n} frames (skip = {c['detection_skip_frames']}), which saves compute."),
+        ("Track", "ByteTrack gives each person a stable ID from frame to frame, even when their face is not visible."),
+        ("Recognise", "ArcFace turns a face into 512 numbers. OSNet does the same for a whole body, for people seen from behind."),
+        ("Match", "The new fingerprints are compared with every stored visitor, then safety rules decide: same person or new."),
+        ("Log", "Every entry and exit saves a cropped photo, a timestamp, an event type and an ID to a folder, events.log and PostgreSQL."),
+        ("Count", "Unique visitors = the number of rows in the faces table. A returning person never adds to it."),
+    ]
+    st.markdown('<div class="flow">' + "".join(
+        f'<div class="step"><div class="n">{i}</div><h4>{t}</h4><p>{d}</p></div>' for i, (t, d) in enumerate(steps, 1)) + '</div>',
+        unsafe_allow_html=True)
+
+    section("How it decides who is who", "thresholds are read from config.json")
+    rules = [
+        (f"&ge; {c['recognition_threshold']}", "Strong face match", "ArcFace similarity at or above this means the same person."),
+        (f"&ge; {c['body_threshold']}", "Strong body match", "Body similarity alone can match someone whose face is not visible."),
+        (f"{c['face_low_threshold']} + {c['body_low_threshold']}", "Face and body together",
+         "A weaker face match and a weaker body match that agree are accepted as the same person."),
+        (f"&lt; {c['face_veto']}", "Face veto", "If the faces clearly differ, no body similarity can override that."),
+        ("Never together", "Two people on screen at once are different people",
+         f"Applies to live matching and to the end-of-run cleanup (overlap of {c['overlap_frames']} frames or more)."),
+        ("Continuity", "Where someone vanished matters",
+         "A new track that starts near where, and soon after, a person disappeared can take over that identity, if the body does not contradict it."),
+        (f"{c['exit_grace_frames']} frames", "Exit rule", "A person unseen for this long has left, and exactly one exit is logged."),
+    ]
+    st.markdown("".join(f'<div class="rule"><div class="k">{k}</div><div><b>{t}</b><span class="d">{d}</span></div></div>'
+                        for k, t, d in rules), unsafe_allow_html=True)
+
+    section("Visitor IDs")
+    st.markdown(f'{badge("F0001")} identified by a face &nbsp;&nbsp; {badge("P0001")} tracked without a usable face (body-only). '
+                'A body-only visitor is promoted to F when a face is seen later.', unsafe_allow_html=True)
+
+    section("Tech stack", f"running on {c['device']}")
+    tech = [("Python 3.11", "Backend and processing"), ("YOLOv8n (Ultralytics)", "Face and person detection"),
+            ("ByteTrack", "Person tracking across frames"), ("InsightFace ArcFace", "Face recognition, 512-number fingerprints"),
+            ("OSNet (torchreid)", "Body re-identification"), ("PyTorch", "Runs YOLO and OSNet on GPU or CPU"),
+            ("OpenCV", "Video reading, cropping and drawing"), ("PostgreSQL 16 (Docker)", "Visitors, events and fingerprint galleries"),
+            ("Streamlit", "This dashboard"), ("config.json", "All settings, including detection_skip_frames")]
+    st.markdown('<div class="stack">' + "".join(f'<div class="tech"><b>{a}</b><span>{b}</span></div>' for a, b in tech) + '</div>',
+                unsafe_allow_html=True)
+
+
+t_live, t_run, t_data, t_how = st.tabs([":material/sensors: Live", ":material/play_circle: Run",
+                                        ":material/insights: Results", ":material/help: How it works"])
 with t_live:
     live_panel()
 with t_run:
     run_panel()
 with t_data:
     dashboard()
+with t_how:
+    how_it_works()

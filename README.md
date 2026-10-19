@@ -50,9 +50,11 @@ docker exec facetracker-db psql -U postgres -d facetracker -c "SELECT kind, COUN
 ```bash
 .venv\Scripts\streamlit run dashboard/app.py      # http://localhost:8501
 ```
-Three tabs: **Live** (annotated stream, FPS, progress, visitor count), **Run** (upload a video, pick a sample or enter an
-RTSP URL, then Start / Stop) and **Results** (KPIs, charts, visitor and event tables with CSV export, latest crops,
-`events.log` tail).
+Four tabs: **Live** (annotated stream, FPS, progress, visitor count, latest events), **Run** (upload a video, pick a sample
+or enter an RTSP URL, then Start / Stop), **Results** (KPIs, charts, visitor and event tables with CSV export, latest
+crops, `events.log` tail, and a **Report** tab that downloads a summary, the visitor and event CSVs, or a zip with the
+crops) and **How it works** (the pipeline, the identity rules with the thresholds from `config.json`, and the tech stack).
+The layout adapts to narrow screens.
 
 ## Sample `config.json`
 The database password below is only the local Docker default from `docker-compose.yml`.
