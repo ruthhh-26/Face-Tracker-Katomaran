@@ -5,10 +5,12 @@ visitor, logs each entry and exit (cropped image + timestamp + event type + ID) 
 PostgreSQL, and counts **unique visitors**. People who never show a face (for example walking away from the camera) are
 tracked too and counted separately.
 
-Demo video:|  Sample output: [`sample_output/`](sample_output/)  |
-Planning: [`docs/PLANNING.md`](docs/PLANNING.md)  |  Architecture: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)  |
-Diagrams (8 slides): [`Face_Tracker_Diagrams.pptx`](Face_Tracker_Diagrams.pptx)  |
-Prompts used: [`PROMPTS.md`](PROMPTS.md)
+- **Demo video:** _add your YouTube link here_
+- **Sample output:** [`sample_output/`](sample_output/)
+- **Planning:** [`docs/PLANNING.md`](docs/PLANNING.md)
+- **Architecture:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+- **Diagrams (8 slides):** [`Face_Tracker_Diagrams.pptx`](Face_Tracker_Diagrams.pptx)
+- **Prompts used:** [`PROMPTS.md`](PROMPTS.md)
 
 ## Tech stack (as required)
 | Module | Tech used |
