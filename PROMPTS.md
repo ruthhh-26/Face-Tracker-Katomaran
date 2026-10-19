@@ -10,7 +10,7 @@ For each prompt: **what it led to** and, where it matters, **what we measured**.
 
 ## 1. Planning
 
-**P1 - Problem statement (4 screenshots) + "how we can implement this in python ... we can use postgres DB"**
+**P1 - Problem statement + "how we can implement this in python ... we can use postgres DB"**
 - Claude read the brief and produced a plan: pipeline (capture -> YOLO face detect -> ByteTrack -> InsightFace ArcFace ->
   entry/exit state machine -> logs/DB), module split (`src/`), PostgreSQL schema, `config.json`, resilience rules, build
   order, verification steps.
