@@ -33,14 +33,15 @@ def export(db, dest: Path):
         w = csv.writer(f)
         w.writerow(["event_id", "visitor", "event_type", "timestamp", "track_id", "image_path"])
         for i, v, t, ts, tr, p in ev:
-            w.writerow([i, label(v), t, ts.isoformat(), tr, p])
+            w.writerow([i, label(v), t, ts.astimezone().isoformat(), tr, p])      # local time of this machine
     with open(dest / "visitors.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["visitor", "kind", "entries", "exits", "first_event", "last_event"])
         for v in sorted(kinds):
             mine = [e for e in ev if e[1] == v]
+            loc = lambda t: t.astimezone().isoformat(sep=" ") if t else ""  # noqa: E731
             w.writerow([label(v), kinds[v], sum(e[2] == "entry" for e in mine), sum(e[2] == "exit" for e in mine),
-                        min((e[3] for e in mine), default=""), max((e[3] for e in mine), default="")])
+                        loc(min((e[3] for e in mine), default=None)), loc(max((e[3] for e in mine), default=None))])
     dump = subprocess.run(["docker", "exec", "facetracker-db", "pg_dump", "-U", "postgres", "-d", "facetracker",
                            "--exclude-table-data=embeddings"], capture_output=True, text=True, encoding="utf-8")
     (dest / "db_dump.sql").write_text(dump.stdout, encoding="utf-8")
@@ -88,8 +89,10 @@ def main():
               "- `logs/events.log` - tracking, embedding, registration, recognition, entry and exit events",
               "- `logs/entries/<date>/` and `logs/exits/<date>/` - cropped images (`F####` = identified by face, "
               "`P####` = tracked without a visible face)",
-              "- `events.csv`, `visitors.csv` - the database rows (`image_path` is relative to that video's `logs/` parent)",
-              "- `db_dump.sql` - PostgreSQL dump of the schema and data (embedding vectors omitted)", "",
+              "- `events.csv`, `visitors.csv` - the database rows, timestamps in local time with their UTC offset "
+              "(`image_path` is relative to that video's `logs/` parent)",
+              "- `db_dump.sql` - PostgreSQL dump of the schema and data (embedding vectors omitted); PostgreSQL prints "
+              "timestamps in UTC (`+00`), the same moments as the local times in the CSVs", "",
               "Counts are honest: the tracker can still split or merge people (see README, Assumptions)."]
     (out / "README.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print("done ->", out)

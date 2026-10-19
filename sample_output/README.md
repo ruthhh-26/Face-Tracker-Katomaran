@@ -11,7 +11,7 @@ Each video folder contains:
 
 - `logs/events.log` - tracking, embedding, registration, recognition, entry and exit events
 - `logs/entries/<date>/` and `logs/exits/<date>/` - cropped images (`F####` = identified by face, `P####` = tracked without a visible face)
-- `events.csv`, `visitors.csv` - the database rows (`image_path` is relative to that video's `logs/` parent)
-- `db_dump.sql` - PostgreSQL dump of the schema and data (embedding vectors omitted)
+- `events.csv`, `visitors.csv` - the database rows, timestamps in local time with their UTC offset (`image_path` is relative to that video's `logs/` parent)
+- `db_dump.sql` - PostgreSQL dump of the schema and data (embedding vectors omitted); PostgreSQL prints timestamps in UTC (`+00`), the same moments as the local times in the CSVs
 
 Counts are honest: the tracker can still split or merge people (see README, Assumptions).

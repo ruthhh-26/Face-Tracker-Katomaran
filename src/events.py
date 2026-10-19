@@ -317,7 +317,7 @@ class EventManager:
                 self._promote(vid, femb)                # earlier back-view visitor now has a face
         else:
             kind = "face" if femb is not None else "body"
-            t.face_id = self.db.add_face(femb, datetime.now(), None, kind, bemb)
+            t.face_id = self.db.add_face(femb, datetime.now().astimezone(), None, kind, bemb)
             self.kinds[t.face_id] = kind
             self.total_visitors += 1
             log.info("REGISTER id=%s%04d track=%d NEW visitor (best face_sim=%s, best body_sim=%s, no match)",
@@ -366,7 +366,7 @@ class EventManager:
 
     # ---- events ---------------------------------------------------------------
     def _emit(self, t: TrackState, kind: str, crop):
-        now = datetime.now()
+        now = datetime.now().astimezone()      # timezone-aware, so PostgreSQL (timestamptz) stores the exact moment
         lab = self.label(t)
         path = self.images.save("entries" if kind == "entry" else "exits", lab, now, crop)
         self.db.add_event(t.face_id, kind, now, path, t.track_id)   # image first, then DB row

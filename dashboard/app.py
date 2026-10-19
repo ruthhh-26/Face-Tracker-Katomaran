@@ -26,7 +26,15 @@ CFG = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
 from src.config import load_config  # noqa: E402  (needs ROOT on sys.path)
 RUN_CFG = load_config(str(ROOT / "config.json"))      # config.json merged with the defaults, for the info pages
 
-ACCENT, ACCENT2, GOOD, WARN, BAD, MUTED = "#7C5CFF", "#22D3EE", "#34D399", "#FBBF24", "#F87171", "#8B95AD"
+LOCAL_TZ = datetime.now().astimezone().tzinfo      # the machine's own timezone
+
+
+def to_local(s: pd.Series) -> pd.Series:
+    """Timestamps are stored as exact moments (timestamptz); show them in the machine's local time."""
+    return pd.to_datetime(s, utc=True).dt.tz_convert(LOCAL_TZ) if len(s) else s
+
+
+ACCENT, ACCENT2, GOOD, WARN, BAD, MUTED ="#7C5CFF", "#22D3EE", "#34D399", "#FBBF24", "#F87171", "#8B95AD"
 
 st.set_page_config(page_title="Face Tracker", page_icon="🎯", layout="wide")
 
@@ -303,8 +311,9 @@ def dashboard():
         st.error(f"Cannot reach PostgreSQL ({e}). Start it with `docker compose up -d`.")
         return
 
+    events["ts"], faces["first_seen"] = to_local(events["ts"]), to_local(faces["first_seen"])
     kinds = dict(zip(faces.face_id, faces.kind))
-    events["visitor"] = [label(kinds.get(v, "face"), v) for v in events.face_id]
+    events["visitor"] =[label(kinds.get(v, "face"), v) for v in events.face_id]
     events["kind"] = [kinds.get(v, "face") for v in events.face_id]
     faces["visitor"] = [label(k, v) for k, v in zip(faces.kind, faces.face_id)]
 
@@ -549,6 +558,8 @@ def live_panel():
                         "ORDER BY e.id DESC LIMIT 8")
         except Exception:  # noqa: BLE001
             rec = pd.DataFrame()
+        if not rec.empty:
+            rec["ts"] = to_local(rec["ts"])
         if rec.empty:
             empty("Waiting for the first entry...")
         else:
